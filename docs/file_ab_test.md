@@ -38,7 +38,7 @@ file; the contents of the input file (the raw bytes); the path of the gold file;
 of the gold file (the raw bytes).
 
 You can use these contents to run the code you want to test and compare it to the gold value. As
-per usual, if you are somehow not happy with the test, [`panic!()`](std::panic) to let the test
+per usual, if you are somehow not happy with the test, [`panic!()`](std::panic!()) to let the test
 harness know the test failed.
 
 ## Syntax
@@ -73,7 +73,7 @@ For example, using this macro on a function `test_lowercase` and an input file `
 produces a unit test called `test_lowercase_hello_world`.
 
 # Examples
-An example of using this macro to try [`std::str::to_lowercase()`] for various input files:
+An example of using this macro to try [`str::to_lowercase()`] for various input files:
 ```ignore
 use std::path::PathBuf;
 
