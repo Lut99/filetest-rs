@@ -5,9 +5,10 @@
 //!   Implements parsing arguments to our attribute macros.
 //
 
+use proc_macro2::Span;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::{Expr, ExprPath, Ident, Path, PathArguments, PathSegment, Token};
+use syn::{Expr, ExprLit, ExprPath, Ident, Lit, LitStr, Path, PathArguments, PathSegment, Token};
 
 
 /***** LIBRARY *****/
@@ -26,7 +27,13 @@ impl Parse for Arguments {
         while !input.is_empty() {
             let mut key: Option<Ident> = Some(input.parse()?);
             let value: Expr = match input.parse::<Token![=]>() {
-                Ok(_) => input.parse()?,
+                Ok(_) => {
+                    if let Ok(s) = input.parse::<macro_string::MacroString>() {
+                        Expr::Lit(ExprLit { attrs: Vec::new(), lit: Lit::Str(LitStr::new(&s.0, Span::call_site())) })
+                    } else {
+                        input.parse()?
+                    }
+                },
                 Err(_) => Expr::Path(ExprPath {
                     attrs: Vec::new(),
                     qself: None,
