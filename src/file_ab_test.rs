@@ -171,6 +171,7 @@ pub fn handle(attrs: TokenStream2, input: TokenStream2) -> Result<TokenStream2, 
         // Write it with the test macro prefix
         res.extend(quote! {
             #[automatically_derived]
+            #[allow(non_snake_case)]
             #[test]
             fn #name() {
                 // Load the inputs
