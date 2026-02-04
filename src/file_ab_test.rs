@@ -155,11 +155,21 @@ pub fn handle(attrs: TokenStream2, input: TokenStream2) -> Result<TokenStream2, 
         let stest: Cow<str> = test.as_os_str().to_string_lossy();
         let sgold: Cow<str> = gold.as_os_str().to_string_lossy();
 
+        // Get only the suffixless base
+        let sfile: Cow<str> = match test.file_name() {
+            Some(file) => file.to_string_lossy(),
+            None => test.as_os_str().to_string_lossy(),
+        };
+        let sbase: &str = match sfile.find('.') {
+            Some(pos) => &sfile[..pos],
+            None => &sfile[..],
+        };
+
         // Preprocess the path to get a unique name
         let input_name: &Ident = &input.sig.ident;
         let mut name: String = input_name.to_string();
         name.push('_');
-        for c in stest.chars() {
+        for c in sbase.chars() {
             if c.is_ascii_alphanumeric() || c == '_' {
                 name.push(c);
             } else {
