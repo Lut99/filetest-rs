@@ -1,0 +1,19 @@
+[package]
+name = "filetest"
+version = "0.1.0"
+edition = "2024"
+authors = ["Lut99"]
+repository = "https://github.com/Lut99/filetest-rs"
+license = "Apache-2.0"
+description = "TODO"
+
+
+[lib]
+proc-macro = true
+
+
+[dependencies]
+
+
+[features]
+default = []
