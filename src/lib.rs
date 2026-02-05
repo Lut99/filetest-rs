@@ -14,7 +14,7 @@
 //!   Optionally, you can commit to a specific tag:
 //!   ```toml
 //!   [dependencies]
-//!   filetest = { git = "https://github.com/Lut99/filetest-rs", tag = "v0.1.0" }
+//!   filetest = { git = "https://github.com/Lut99/filetest-rs", tag = "v0.1.1" }
 //!   ```
 //!   
 //!   

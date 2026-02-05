@@ -19,7 +19,7 @@ use filetest::file_ab_test;
 ///
 /// In this case, when running this test, you should see three cases: `test_lowercase_hello_world`;
 /// `test_lowercase_uppercase`; and `test_lowercase_lowercase`.
-#[file_ab_test(input = ".txt", gold = ".gold.txt", path = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/files"))]
+#[file_ab_test(input = ".txt", gold = ".gold.txt", path = concat!(env!("CARGO_MANIFEST_DIR"), "/../filetest/tests/files"))]
 fn test_lowercase(input_path: PathBuf, input: Vec<u8>, _gold_path: PathBuf, gold: Vec<u8>) {
     // Interpret both as strings
     let input: &str = std::str::from_utf8(&input).unwrap();

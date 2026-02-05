@@ -72,6 +72,16 @@ Then it is prefixed by the name of your function and an underscore.
 For example, using this macro on a function `test_lowercase` and an input file `hello_world.txt`
 produces a unit test called `test_lowercase_hello_world`.
 
+It can be that names conflict, in two cases:
+- There are two files with the same name in two different directories. In that case, the differing
+  paths are included; e.g., if we have `foo/hello-world.txt` and `hello-world.txt`, the names are
+  `test_lowercase_foo_hello_world` and `test_lowercase_hello_world`, respectively.
+- There are two files in the same folder that collide because the identifiers are simplified. In
+  that case, the functions are simply appended with a unique number. For example, a folder with
+  `hello-world.txt` and `hello_world.txt` generates unit tests with names
+  `test_lowercase_hello_world1` and `test_lowercase_hello_world2`, respectively (ordered
+  alphabetically by Rust's judgement).
+
 # Examples
 An example of using this macro to try [`str::to_lowercase()`] for various input files:
 ```ignore
