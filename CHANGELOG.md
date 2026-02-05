@@ -4,6 +4,15 @@ This file keeps track of notable changes to the `filetest`-crate.
 This project uses [semantic versioning](https://semver.org). As such, breaking changes are indicated by **(BREAKING)**.
 
 
+## v0.2.0 - 2026-02-5
+### Added
+- `#[file_ab_test]` now also accepts a parameter to not error on missing gold files but ignore
+  those pairs instead.
+
+### Fixed
+- Positional argument passing not working.
+
+
 ## v0.1.1 - 2026-02-05
 ### Fixed
 - The system now also finds tests if you use `.` or `..` in paths before the last file.

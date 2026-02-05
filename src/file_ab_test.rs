@@ -54,6 +54,8 @@ fn safeify(raw: &str) -> Cow<'_, str> {
 /***** ARGUMENTS *****/
 /// Specific arguments for this macro.
 struct FileABTestArgs {
+    /// Whether or not gold files are enforced.
+    assert_gold_files: bool,
     /// The suffix of input files.
     input_suffix: String,
     /// The suffix of gold files.
@@ -75,6 +77,7 @@ impl TryFrom<Arguments> for FileABTestArgs {
 
         // Either position 0, or the `input`-key.
         let mut pos_i: usize = 0;
+        let mut assert_gold_files = true;
         let mut input_suffix = None;
         let mut gold_suffix = None;
         let mut path = None;
@@ -103,6 +106,11 @@ impl TryFrom<Arguments> for FileABTestArgs {
                 if key.is_none() {
                     pos_i += 1
                 }
+            } else if key_is(&key, "assert_gold_files") {
+                let Expr::Lit(ExprLit { lit: Lit::Bool(value), .. }) = value else {
+                    return Err(syn::Error::new(value.span(), "Expected a boolean literal value for 'assert_gold_files'"));
+                };
+                assert_gold_files = value.value;
             } else if let Some(key) = key {
                 return Err(syn::Error::new(key.span(), "Unknown argument {key}"));
             } else {
@@ -114,7 +122,7 @@ impl TryFrom<Arguments> for FileABTestArgs {
         let input_suffix = input_suffix.ok_or_else(|| syn::Error::new(Span::call_site(), "Missing argument 'input' (position 0)"))?;
         let gold_suffix = gold_suffix.ok_or_else(|| syn::Error::new(Span::call_site(), "Missing argument 'gold' (position 1)"))?;
         let (path, path_span) = path.ok_or_else(|| syn::Error::new(Span::call_site(), "Missing argument 'path' (position 2)"))?;
-        Ok(Self { input_suffix, gold_suffix, path, path_span })
+        Ok(Self { assert_gold_files, input_suffix, gold_suffix, path, path_span })
     }
 }
 
@@ -136,7 +144,7 @@ impl TryFrom<Arguments> for FileABTestArgs {
 /// This function may error if we failed to parse the input correctly.
 pub fn handle(attrs: TokenStream2, input: TokenStream2) -> Result<TokenStream2, syn::Error> {
     let args: Arguments = syn::parse2(attrs)?;
-    let FileABTestArgs { input_suffix, gold_suffix, path, path_span } = args.try_into()?;
+    let FileABTestArgs { assert_gold_files, input_suffix, gold_suffix, path, path_span } = args.try_into()?;
 
     // Parse the input
     let input: ItemFn = syn::parse2(input)?;
@@ -170,7 +178,11 @@ pub fn handle(attrs: TokenStream2, input: TokenStream2) -> Result<TokenStream2, 
             // Attempt to find the gold file
             let gold: PathBuf = format!("{base}{gold_suffix}").into();
             if !gold.is_file() {
-                return Err(syn::Error::new(path_span, &format!("Gold file {gold:?} for input file {next:?} not found or not a file")));
+                // Error if we're asserting; else, just skip this pair
+                if assert_gold_files {
+                    return Err(syn::Error::new(path_span, &format!("Gold file {gold:?} for input file {next:?} not found or not a file")));
+                }
+                continue;
             }
 
             // Store the file as the pair

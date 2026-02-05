@@ -54,14 +54,17 @@ out-of-order using `key = value`-syntax:
 - `path`: The path to look for test files in. May be either a file or a directory, where the latter
   is recursively searched. Note that a given standalone file still needs to match the input suffix!
   I.e., nothing is generated if your suffix is `.txt` but the path is `hello_world.doc`.
+- `assert_gold_files` **(OPTIONAL)**: Whether or not to error when no gold file is found (true) or
+  simply skip that pair instead (false). Defaults to true if omitted.
 
 The following are all valid examples for giving the input suffix `.txt`, gold suffix `.gold.txt`
 and path `foo`:
 ```ignore
 #[file_ab_test(".txt", ".gold.txt", "foo")]
-#[file_ab_test(".txt", ".gold.txt", path = "foo")]
+#[file_ab_test(".txt", ".gold.txt", assert_gold_files = true, path = "foo")]
 #[file_ab_test(input = ".txt", gold = ".gold.txt", path = "foo")]
 #[file_ab_test(input = ".txt", path = "foo", gold = ".gold.txt")]
+#[file_ab_test(input = ".txt", path = "foo", gold = ".gold.txt", assert_gold_files = false)]
 ```
 
 ## Test name generation
